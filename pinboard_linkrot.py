@@ -7,19 +7,19 @@ import sys
 from requests.exceptions import SSLError, InvalidSchema, ConnectionError
 
 def get_link_status_code(link):
-	headers = {'User-agent':'Mozilla/5.0'}
-	try:
-		r = requests.get(link, headers = headers)
-		return r.status_code
-	except (SSLError, InvalidSchema, ConnectionError):
-		return 409
+    headers = {'User-agent':'Mozilla/5.0'}
+    try:
+        r = requests.get(link, headers = headers)
+        return r.status_code
+    except (SSLError, InvalidSchema, ConnectionError):
+        return 409
 
 def is_valid_link(status_code):
-	if status_code == 200:
-		return True
-	else:
-		return False 
-	
+    if status_code == 200:
+        return True
+    else:
+        return False 
+    
 def process_links(links):
     bad_links = 0
     try:
@@ -30,15 +30,15 @@ def process_links(links):
                 bad_links += 1
     except KeyboardInterrupt:
         pass
-	
-	linkrot = int(bad_links/len(links)*100)
-	print '\n%s%% linkrot\n' % linkrot
-		
+    
+    linkrot = int(bad_links/len(links)*100)
+    print '\n%s%% linkrot\n' % linkrot
+        
 def process_bookmarks_file(filename):
-	with open(filename) as f:
-		bookmarks = json.load(f)
-		process_links(bookmarks)
-		
+    with open(filename) as f:
+        bookmarks = json.load(f)
+        process_links(bookmarks)
+        
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         print 'Usage: pinboard_linkrot.py <bookmarks.json>'
