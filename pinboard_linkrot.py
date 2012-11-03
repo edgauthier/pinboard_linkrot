@@ -22,11 +22,12 @@ def is_valid_link(status_code):
     
 def process_links(links):
     bad_links = 0
+    print '#Pinboard linkrot results\n'
     try:
         for link in links:
             status_code = get_link_status_code(link['href'])
             if not is_valid_link(status_code):
-                print 'Invalid link (%s): %s [%s]' % (status_code, link['description'], link['href'])
+                print '- Invalid link (%s): [%s](%s)  ' % (status_code, link['description'], link['href'])
                 bad_links += 1
     except KeyboardInterrupt:
         pass
