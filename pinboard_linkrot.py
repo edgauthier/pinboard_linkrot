@@ -32,7 +32,7 @@ def process_links(links):
         pass
     
     linkrot = int(bad_links/len(links)*100)
-    print '\n%s%% linkrot\n' % linkrot
+    print '\n%s%% linkrot (%s/%s)\n' % (linkrot, bad_links, len(links))
         
 def process_bookmarks_file(filename):
     with open(filename) as f:
