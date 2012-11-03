@@ -9,7 +9,7 @@ from requests.exceptions import SSLError, InvalidSchema, ConnectionError
 def get_link_status_code(link):
     headers = {'User-agent':'Mozilla/5.0'}
     try:
-        r = requests.get(link, headers = headers)
+        r = requests.head(link, headers=headers, allow_redirects=True)
         return r.status_code
     except (SSLError, InvalidSchema, ConnectionError):
         return 409
