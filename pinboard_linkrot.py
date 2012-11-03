@@ -11,8 +11,8 @@ def get_link_status_code(link):
     try:
         r = requests.head(link, headers=headers, allow_redirects=True)
         return r.status_code
-    except (SSLError, InvalidSchema, ConnectionError):
-        return 409
+    except (Exception) as e:
+        return '%s: %s' % (type(e).__name__, str(e)) 
 
 def is_valid_link(status_code):
     if status_code == 200:
