@@ -1,4 +1,5 @@
 #!/usr/bin/env python -u
+# Run python in unbuffered mode, to use with tail-like apps
 
 from __future__ import division
 import requests
@@ -6,15 +7,14 @@ import json
 import sys
 import codecs
 import locale
-from requests.exceptions import SSLError, InvalidSchema, ConnectionError
 
 # use preferred encoding, even when piping output to another program or file
 sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
 
 def get_link_status_code(link):
-    headers = {'User-agent':'Mozilla/5.0'}
+    headers = {'User-agent': 'Mozilla/5.0'}
     try:
-        r = requests.head(link, headers=headers, allow_redirects=True)
+        r = requests.get(url, headers=headers)
         return r.status_code
     except (Exception) as e:
         return '%s: %s' % (type(e).__name__, str(e)) 
