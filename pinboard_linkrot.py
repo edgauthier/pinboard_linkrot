@@ -1,10 +1,15 @@
-#!/usr/bin/env python
+#!/usr/bin/env python -u
 
 from __future__ import division
 import requests
 import json
 import sys
+import codecs
+import locale
 from requests.exceptions import SSLError, InvalidSchema, ConnectionError
+
+# use preferred encoding, even when piping output to another program or file
+sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
 
 def get_link_status_code(link):
     headers = {'User-agent':'Mozilla/5.0'}
