@@ -20,10 +20,7 @@ def get_link_status_code(link):
         return '%s: %s' % (type(e).__name__, str(e)) 
 
 def is_valid_link(status_code):
-    if status_code == 200:
-        return True
-    else:
-        return False 
+    return (status_code == 200)
     
 def process_links(links):
     bad_links = 0
