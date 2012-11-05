@@ -28,9 +28,9 @@ def ignored_link(link, ignore_tags):
     return True if ignore_tags.intersection(link_tags) else False 
 
 def linkrot_summary_header(ignore_tags):
-    msg = '#Pinboard linkrot results\n\n'
-    if len(ignore_tags) > 0:
-        msg += '**Ignored tags:** %s\n' % (', '.join(ignore_tags))
+    msg = '#Pinboard linkrot results\n'
+    if ignore_tags:
+        msg += '\n**Ignored tags:** %s\n' % (', '.join(ignore_tags))
     return msg
 
 def linkrot_summary_footer(num_bad_links, num_good_links):
@@ -56,7 +56,7 @@ def process_links(links, ignore_tags):
                 num_bad_links += 1
             num_links_processed += 1
     except KeyboardInterrupt:
-        print "\nProcessing cancelled...\n"
+        print "\nProcessing cancelled..."
         pass
     
     print linkrot_summary_footer(num_bad_links, num_links_processed)
