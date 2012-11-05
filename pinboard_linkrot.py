@@ -11,35 +11,55 @@ import locale
 # use preferred encoding, even when piping output to another program or file
 sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
 
-def get_link_status_code(link):
-    headers = {'User-agent': 'Mozilla/5.0'}
+def get_link_status(url):
+    headers = {'User-agent': 'Mozilla/5.0 ()'}
     try:
         r = requests.get(url, headers=headers)
         return r.status_code
     except (Exception) as e:
         return '%s: %s' % (type(e).__name__, str(e)) 
 
-def is_valid_link(status_code):
-    return (status_code == 200)
+def valid_link(status):
+    return (status == requests.codes.ok)
     
-def process_links(links, ignore_tags):
-    bad_links = 0
+def ignored_link(link, ignore_tags):
     ignore_tags = set(ignore_tags)
-    print '#Pinboard linkrot results\n'
-    print '**Ignored tags:** %s\n' % (', '.join(ignore_tags))
+    link_tags = link['tags'].split(' ')
+    return True if ignore_tags.intersection(link_tags) else False 
+
+def linkrot_summary_header(ignore_tags):
+    msg = '#Pinboard linkrot results\n\n'
+    if len(ignore_tags) > 0:
+        msg += '**Ignored tags:** %s\n' % (', '.join(ignore_tags))
+    return msg
+
+def linkrot_summary_footer(num_bad_links, num_good_links):
+    linkrot = int(num_bad_links/num_good_links*100)
+    return '\n%s%% linkrot (%s/%s)\n' % (linkrot, num_bad_links, num_good_links)
+
+def invalid_link_message(status, link):
+    return '- Invalid link (%s): [%s](%s)  ' % (status, link['description'], link['href'])
+
+def process_links(links, ignore_tags):
+    num_bad_links = 0
+    num_links_processed = 0
+
+    print linkrot_summary_header(ignore_tags)
+
     try:
         for link in links:
-            # If the link includes any of the ignored tags, skip this link
-            if len(ignore_tags.intersection(link['tags'].split(' '))) > 0: continue
-            status_code = get_link_status_code(link['href'])
-            if not is_valid_link(status_code):
-                print '- Invalid link (%s): [%s](%s)  ' % (status_code, link['description'], link['href'])
-                bad_links += 1
+            if ignored_link(link, ignore_tags): 
+                continue
+            status = get_link_status(link['href'])
+            if not valid_link(status):
+                print invalid_link_message(status, link)
+                num_bad_links += 1
+            num_links_processed += 1
     except KeyboardInterrupt:
+        print "\nProcessing cancelled...\n"
         pass
     
-    linkrot = int(bad_links/len(links)*100)
-    print '\n%s%% linkrot (%s/%s)\n' % (linkrot, bad_links, len(links))
+    print linkrot_summary_footer(num_bad_links, num_links_processed)
         
 def process_bookmarks_file(filename, ignore_tags = []):
     with open(filename) as f:
